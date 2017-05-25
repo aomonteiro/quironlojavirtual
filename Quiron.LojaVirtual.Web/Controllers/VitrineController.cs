@@ -1,4 +1,5 @@
 ﻿using Quiron.LojaVirtual.Dominio.Repository;
+using Quiron.LojaVirtual.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,25 @@ namespace Quiron.LojaVirtual.Web.Controllers
         public ActionResult ListProducts(int page = 1)
         {
             _repository = new ProductRepository();
-            var products = _repository.Product
+
+            ProductsViewModel model = new ProductsViewModel
+            {
+
+                Products = _repository.Product
                 .OrderBy(p => p.Name)
                 .Skip((page - 1) * productPerPage)
-                .Take(productPerPage);
+                .Take(productPerPage),
 
-            return View(products);
+                Pagination = new Pagination
+                {
+                    CurrentPage = page,
+                    ItensPerPage = productPerPage,
+                    TotalItens = _repository.Product.Count()
+                }
+
+            };
+            
+            return View(model);
         }
     }
 }
